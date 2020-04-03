@@ -29,10 +29,13 @@ function init(){
     let lista = document.getElementById('alumnos');
     lista.innerHTML = ''; // vaciar html 
 
+    /*
     for(let i=0; i < personas.length; i++){
         const persona = personas[i];
         lista.innerHTML += `<li><img src="${persona.avatar}" alt="avatar">${persona.nombre}</li>`;
-    }
+    }*/
+
+    personas.forEach( p => lista.innerHTML += `<li><img src="${p.avatar}" alt="avatar">${p.nombre}</li>` );
 
 
 }//init
