@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" >
+    <title>Document</title>
+</head>
+<body>
+    <main class="container">
+        <h1>Pokemons</h1>
+
+        <div class="row">
+            <!-- listado -->
+            <div class="col">
+                <ul id="lista" class="list-group">
+                    <li class="list-group-item">Cargando...</li>
+                    <!--
+                    <li onclick="detallePokemon('pikachu')" class="list-group-item">Pikachu</li>
+                    <li onclick="detallePokemon('bulbasur')" class="list-group-item">Bulbasor</li>
+                    <li onclick="detallePokemon('Ditto')" class="list-group-item">Ditto</li>                    
+                    -->
+                  </ul>
+            </div>
+            <!-- /listado -->
+
+            <!-- detalle -->
+            <div class="col">
+                <div class="card" style="width: 18rem;">
+                    <img id="pokemonImagen" src="https://picsum.photos/150/150" class="card-img-top" alt="pokemon">
+                    <div class="card-body">
+                      <h5 id="pokemonNombre" class="card-title">Pokemon Nombre</h5>
+                      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>                      
+                    </div>
+                  </div>
+            </div>
+            <!-- /detalle -->
+        </div>
+
+    </main>
+
+    <script src="../js/pokemon.js"></script>
+    
+</body>
+</html>
