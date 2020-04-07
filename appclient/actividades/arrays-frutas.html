@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Array Frutas: Map, filter, reduce</h1>
+
+<script>
+
+const frutas = [
+            {
+                "nombre": "fresa",
+                "precio": 4.56,
+                "oferta": true,
+                "descuento" : 50,
+                "colores" : [ "rojo" ]
+            },
+            {
+                "nombre": "manzana",
+                "precio": 1.99,
+                "oferta": false,
+                "descuento" : 50,
+                "colores" : [ "rojo","verde","amarillo" ]
+            },
+            {
+                "nombre": "kiwi",
+                "precio": 3.00,
+                "oferta": false,
+                "descuento" : 10,
+                "colores" : [ "verde","amarillo" ]
+            }
+            
+        ];
+
+    console.info(frutas);        
+
+//	Array solo con nombres de frutas ( map )
+console.info('Array solo con nombres de frutas ( map )');
+console.info( frutas.map( el => el.nombre ) );
+/*
+console.info( frutas.map( (el) => { 
+                                    // otras sentencias de codigo
+                                      return  el.nombre;
+                                    }) );
+*/
+
+//	Array solo con nombres de frutas que están en oferta ( map + filter )
+console.info('Array solo con nombres de frutas que están en oferta');
+console.info( frutas.filter( el => el.oferta )
+                    .map( el => el.nombre ) 
+            );
+
+
+//	Precio TOTAL de todas las frutas ( map + reduce )
+console.info('Precio TOTAL de todas las frutas');
+console.info( frutas.map( el => el.precio )
+                    .reduce( (p,c) => p + c, 0 )
+            );
+
+//	Precio TOTAL de todas las frutas, pero aplicando el descuento si están en oferta ( map, filter, reduce )
+console.info('Precio TOTAL de todas las frutas, pero aplicando el descuento si están en oferta ( map, filter, reduce )');
+/*
+console.info( frutas.map( el => { 
+                                    if( el.oferta ){
+                                        return ( el.precio - ( el.precio * el.descuento /100 ));
+                                    }else{
+                                        return el.precio;
+                                    }    
+                                }).reduce( (p,c) => p + c, 0 )
+            );
+*/
+
+console.info( frutas
+                    .map( el => ( el.oferta ) ? el.precio - ( el.precio * el.descuento /100 ) : el.precio)
+                    .reduce( (p,c) => p + c, 0 ));
+
+
+
+
+//	Set solo con los colores de las frutas sin repeticion
+console.info('Array solo con los colores de las frutas ');
+console.info( [...new Set(
+                            frutas.map(el => el.colores )
+                                  .reduce( (p,c,i,a) => { 
+                                                        const resultado = p.concat(c);
+                                                        return resultado;
+                                                    } )
+                )]
+            );
+
+// ["rojo"] concat ["rojo","amarrillo","verde"] =>   ["rojo","rojo","amarrillo","verde"]
+
+
+
+</script>
+
+</body>
+</html>
