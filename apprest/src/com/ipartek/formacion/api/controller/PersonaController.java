@@ -29,10 +29,10 @@ public class PersonaController {
 	
 	public PersonaController() {
 		super();
-		personas.add( new Persona(1,"Arantxa","avatar1.png") );
-		personas.add( new Persona(1,"Idoia","avatar2.png") );
-		personas.add( new Persona(1,"Iker","avatar3.png") );
-		personas.add( new Persona(1,"Hodei","avatar4.png") );
+		personas.add( new Persona(1,"Arantxa","avatar1.png", "m") );
+		personas.add( new Persona(2,"Idoia","avatar2.png", "m") );
+		personas.add( new Persona(3,"Iker","avatar3.png", "h") );
+		personas.add( new Persona(4,"Hodei","avatar4.png", "h") );
 	}
 
 
