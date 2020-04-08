@@ -1,7 +1,7 @@
 "use strict";
 // este array se carga de forma asincrona mediante Ajax
-//const endpoint = 'http://127.0.0.1:5500/js/data/personas.json';
-const endpoint = 'http://localhost:8080/apprest/api/personas/';
+const endpoint = 'http://127.0.0.1:5500/js/data/personas.json';
+//const endpoint = 'http://localhost:8080/apprest/api/personas/';
 let personas = [];
 
 
@@ -71,9 +71,65 @@ function pintarLista( arrayPersonas ){
     //seleccionar la lista por id
     let lista = document.getElementById('alumnos');
     lista.innerHTML = ''; // vaciar html 
-    arrayPersonas.forEach( p => lista.innerHTML += `<li><img src="img/${p.avatar}" alt="avatar">${p.nombre}</li>` );
+    arrayPersonas.forEach( (p,i) => lista.innerHTML += `<li>
+                                                            <img src="img/${p.avatar}" alt="avatar">${p.nombre}
+                                                            <i class="fas fa-pencil-ruler" onclick="seleccionar(${i})"></i>
+                                                            <i class="fas fa-trash" onclick="eliminar(${i})"></i>
+                                                         </li>` );
 }
 
+function eliminar(indice){
+    let personaSeleccionada = personas[indice];
+    console.debug('click eliminar persona %o', personaSeleccionada);
+    const mensaje = `¿Estas seguro que quieres eliminar  a ${personaSeleccionada.nombre} ?`;
+    if ( confirm(mensaje) ){
+
+        //TODO mirar como remover de una posicion
+        //personas = personas.splice(indice,1);
+        personas = personas.filter( el => el.id != personaSeleccionada.id) 
+        pintarLista(personas);
+        //TODO llamada al servicio rest
+
+    }
+
+}
+
+function seleccionar(indice){
+
+    let  personaSeleccionada = { "id":0, "nombre": "sin nombre" };
+
+    if ( indice != 0 ){
+        personaSeleccionada = personas[indice];
+    }
+    
+    console.debug('click guardar persona %o', personaSeleccionada);
+   
+    //rellernar formulario
+    document.getElementById('inputId').value = personaSeleccionada.id;
+    document.getElementById('inputNombre').value = personaSeleccionada.nombre;
+   
+}
+
+function guardar(){
+
+    console.trace('click guardar');
+    let id = document.getElementById('inputId').value;
+    let nombre = document.getElementById('inputNombre').value;
+
+    let persona = {
+        "id" : id,
+        "nombre" : nombre,
+        "avatar" : "avatar7.png"
+    };
+
+    console.debug('persona a guardar %o', persona);
+
+    //TODO llamar servicio rest
+
+    personas.push(persona);
+    pintarLista(personas);
+
+}
 
 function busqueda( sexo = 't', nombreBuscar = '' ){
 

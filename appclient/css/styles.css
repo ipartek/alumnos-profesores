@@ -1,4 +1,9 @@
 /* estilos propios */
+
+body{
+    box-sizing: content-box;
+}
+
 h1{ 
     background-color: teal;
     color: #FFF;
@@ -20,4 +25,18 @@ main.container{
 .container-filter{
     padding: 0.5rem;
     border: 1px solid #DDD;
+}
+
+.row{
+    display: flex;
+}
+.col{
+    width: 50%;
+}
+
+.formulario{
+    box-sizing: content-box;
+    padding: 10px;
+    border:1px solid grey;
+    margin: 0 0 0 10px;
 }
