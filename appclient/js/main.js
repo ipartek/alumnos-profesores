@@ -11,22 +11,19 @@ function init(){
     console.debug('Document Load and Ready');    
     listener();
 
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        // recibimos la RESPONSE
-        if (this.readyState == 4 && this.status == 200) {
-            
-            const jsonData = JSON.parse(this.responseText);    
-            console.debug( jsonData );         
-            personas = jsonData;
+    const promesa = ajax("GET", endpoint, undefined);
+    promesa
+    .then( data => {
+            console.trace('promesa resolve'); 
+            personas = data;
             pintarLista( personas );
 
-        }// his.readyState == 4 && this.status == 200
+    }).catch( error => {
+            console.warn('promesa rejectada');
+            alert(error);
+    });
 
-    };// onreadystatechange
-    xhttp.open("GET", endpoint , true);    
-    xhttp.send();
-
+    console.debug('continua la ejecuion del script de forma sincrona');
     // CUIDADO!!!, es asincrono aqui personas estaria sin datos
     // pintarLista( personas );
 
