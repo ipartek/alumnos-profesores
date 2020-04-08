@@ -1,21 +1,8 @@
-// fichero javascript para app
-const personas = [
-    {
-        "nombre" : "Oconnor",
-        "avatar" : "img/avatar1.png",
-        "sexo"   : "h"
-    },
-    {
-        "nombre" : "Pepa",
-        "avatar" : "img/avatar2.png",
-        "sexo"   : "m"
-    },
-    {
-        "nombre" : "JoseMAri",
-        "avatar" : "img/avatar3.png",
-        "sexo"   : "h"
-    }
-];
+"use strict";
+// este array se carga de forma asincrona mediante Ajax
+//const endpoint = 'http://127.0.0.1:5500/js/data/personas.json';
+const endpoint = 'http://localhost:8080/apprest/api/personas/';
+let personas = [];
 
 
 window.addEventListener('load', init() );
@@ -24,8 +11,24 @@ function init(){
     console.debug('Document Load and Ready');    
     listener();
 
-    //TODO llamada Ajax al servicio Rest, Cuidado es ASINCRONO!!!!!
-    pintarLista( personas );
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        // recibimos la RESPONSE
+        if (this.readyState == 4 && this.status == 200) {
+            
+            const jsonData = JSON.parse(this.responseText);    
+            console.debug( jsonData );         
+            personas = jsonData;
+            pintarLista( personas );
+
+        }// his.readyState == 4 && this.status == 200
+
+    };// onreadystatechange
+    xhttp.open("GET", endpoint , true);    
+    xhttp.send();
+
+    // CUIDADO!!!, es asincrono aqui personas estaria sin datos
+    // pintarLista( personas );
 
 }//init
 
@@ -71,7 +74,7 @@ function pintarLista( arrayPersonas ){
     //seleccionar la lista por id
     let lista = document.getElementById('alumnos');
     lista.innerHTML = ''; // vaciar html 
-    arrayPersonas.forEach( p => lista.innerHTML += `<li><img src="${p.avatar}" alt="avatar">${p.nombre}</li>` );
+    arrayPersonas.forEach( p => lista.innerHTML += `<li><img src="img/${p.avatar}" alt="avatar">${p.nombre}</li>` );
 }
 
 

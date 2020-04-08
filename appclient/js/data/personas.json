@@ -1,0 +1,6 @@
+[
+    {"id":1,"nombre":"Arantxa","avatar":"avatar1.png","sexo":"m"},
+    {"id":2,"nombre":"Idoia","avatar":"avatar2.png","sexo":"m"},
+    {"id":3,"nombre":"Iker","avatar":"avatar3.png","sexo":"h"},
+    {"id":4,"nombre":"Hodei","avatar":"avatar4.png","sexo":"h"}
+]
