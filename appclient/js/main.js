@@ -1,7 +1,7 @@
 "use strict";
 // este array se carga de forma asincrona mediante Ajax
-const endpoint = 'http://127.0.0.1:5500/js/data/personas.json';
-//const endpoint = 'http://localhost:8080/apprest/api/personas/';
+//const endpoint = 'http://127.0.0.1:5500/js/data/personas.json';
+const endpoint = 'http://localhost:8080/apprest/api/personas/';
 let personas = [];
 
 
@@ -161,7 +161,10 @@ function guardar(){
     const id = document.getElementById('inputId').value;
     const nombre = document.getElementById('inputNombre').value;
     const avatar = document.getElementById('inputAvatar').value;
-    const sexo = document.getElementById('inputSexo').value;
+   
+   //TODO arrgelar bug, ahora tenemos 2 radio buttons 
+   // const sexo = document.getElementById('inputSexo').value;
+   const sexo = 'h';
 
     let persona = {
         "id" : id,
@@ -176,8 +179,30 @@ function guardar(){
 
     if ( id == 0 ){
         console.trace('Crear nueva persona');
-        persona.id = ++personas.length;
-        personas.push(persona);
+        //persona.id = ++personas.length;
+        //personas.push(persona);
+
+        ajax('POST',endpoint, persona)
+            .then( data => {
+ 
+                    // conseguir de nuevo todos los alumnos
+                    ajax("GET", endpoint, undefined)               
+                    .then( data => {
+                            console.trace('promesa resolve'); 
+                            personas = data;
+                            pintarLista( personas );
+                
+                    }).catch( error => {
+                            console.warn('promesa rejectada');
+                            alert(error);
+                    });
+
+            })
+            .catch( error => {
+                console.warn('promesa rejectada');
+                alert(error);
+            });
+        
 
     }else{
         console.trace('Modificar persona');

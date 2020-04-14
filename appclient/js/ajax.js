@@ -32,6 +32,7 @@ function ajax( metodo, url, datos ){
         };// onreadystatechange
 
         xhttp.open( metodo , url , true);
-        xhttp.send();
+        xhttp.setRequestHeader('Content-Type', 'application/json');
+        xhttp.send( JSON.stringify(datos) );
     });
 }
