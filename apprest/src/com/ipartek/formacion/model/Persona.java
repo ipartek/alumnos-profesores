@@ -1,10 +1,19 @@
 package com.ipartek.formacion.model;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 public class Persona {
 
 	private int id;
+	
+	@NotEmpty(message = "No puede estar vacio")
+	@Size(min = 2, max = 100, message = "El nombre debe tener mínimo 2 caracteres y maximo 100")
 	private String nombre;
+	
+	@NotEmpty
 	private String avatar;
+	
 	private String sexo;
 	
 	public Persona() {

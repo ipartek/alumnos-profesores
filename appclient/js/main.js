@@ -87,11 +87,27 @@ function eliminar(indice){
     const mensaje = `¿Estas seguro que quieres eliminar  a ${personaSeleccionada.nombre} ?`;
     if ( confirm(mensaje) ){
 
-        //TODO mirar como remover de una posicion
-        //personas = personas.splice(indice,1);
-        personas = personas.filter( el => el.id != personaSeleccionada.id) 
-        pintarLista(personas);
-        //TODO llamada al servicio rest
+        const url = endpoint + personaSeleccionada.id;
+        ajax('DELETE', url, undefined)
+            .then( data => {
+ 
+                    // conseguir de nuevo todos los alumnos
+                    ajax("GET", endpoint, undefined)               
+                    .then( data => {
+                            console.trace('promesa resolve'); 
+                            personas = data;
+                            pintarLista( personas );
+                
+                    }).catch( error => {
+                            console.warn('promesa rejectada');
+                            alert(error);
+                    });
+
+            })
+            .catch( error => {
+                console.warn('promesa rejectada');
+                alert(error);
+            });
 
     }
 
@@ -177,7 +193,8 @@ function guardar(){
 
     //TODO llamar servicio rest
 
-    if ( id == 0 ){
+    //CREAR
+    if ( id == 0 ){ 
         console.trace('Crear nueva persona');
         //persona.id = ++personas.length;
         //personas.push(persona);
@@ -204,12 +221,35 @@ function guardar(){
             });
         
 
+    // MODIFICAR
     }else{
         console.trace('Modificar persona');
-        personas = personas.map( el => (el.id == persona.id) ? persona : el );
+
+        const url = endpoint + persona.id;
+        ajax('PUT', url , persona)
+            .then( data => {
+ 
+                    // conseguir de nuevo todos los alumnos
+                    ajax("GET", endpoint, undefined)               
+                    .then( data => {
+                            console.trace('promesa resolve'); 
+                            personas = data;
+                            pintarLista( personas );
+                
+                    }).catch( error => {
+                            console.warn('promesa rejectada');
+                            alert(error);
+                    });
+
+            })
+            .catch( error => {
+                console.warn('No se pudo actualizar');
+                alert(error);
+            });
+        
     }
 
-    pintarLista(personas);
+   
 
 }
 
