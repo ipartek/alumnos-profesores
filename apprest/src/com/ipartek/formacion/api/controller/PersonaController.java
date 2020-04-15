@@ -17,12 +17,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import com.ipartek.formacion.model.Persona;
+import com.ipartek.formacion.model.dao.PersonaDAO;
 
 @Path("/personas")
 @Produces("application/json")
@@ -32,6 +34,9 @@ public class PersonaController {
 	private static final Logger LOGGER = Logger.getLogger(PersonaController.class.getCanonicalName());
 
 	private static int id = 1;
+	
+	//TODO implementar patron Singleton, deberiamos haber usado getInstance();
+	private static PersonaDAO personaDAO = new PersonaDAO();
 
 	private ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 	private Validator validator = factory.getValidator();
@@ -55,8 +60,10 @@ public class PersonaController {
 
 	@GET
 	public ArrayList<Persona> getAll() {
-		LOGGER.info("getAll");
-		return personas;
+		LOGGER.info("getAll");		
+		// return personas;
+		ArrayList<Persona> registros = (ArrayList<Persona>) personaDAO.getAll(); 
+		return registros;
 	}
 
 	@POST
@@ -66,64 +73,56 @@ public class PersonaController {
 
 		// validar pojo
 		Set<ConstraintViolation<Persona>> violations = validator.validate(persona);
-		
-		if ( violations.isEmpty() ) {
-		
+
+		if (violations.isEmpty()) {
+
 			persona.setId(id);
 			id++;
 			personas.add(persona);
 			response = Response.status(Status.CREATED).entity(persona).build();
-			
-		}else {
+
+		} else {
 			ArrayList<String> errores = new ArrayList<String>();
-			for ( ConstraintViolation<Persona> violation : violations ) { 
-				errores.add( violation.getPropertyPath() + ": " + violation.getMessage() );
+			for (ConstraintViolation<Persona> violation : violations) {
+				errores.add(violation.getPropertyPath() + ": " + violation.getMessage());
 			}
-			
+
 			response = Response.status(Status.BAD_REQUEST).entity(errores).build();
 		}
 
 		return response;
-		
+
 	}
 
 	@PUT
 	@Path("/{id: \\d+}")
-	public Persona update(@PathParam("id") int id, Persona persona) {
-		LOGGER.info("update(" + id + ", " + persona + ")");
+	public Response update(@PathParam("id") int id, Persona persona) {
+		LOGGER.info("update(" + id + ", " + persona + ")");		
+		Response response = Response.status(Status.NOT_FOUND).entity(persona).build();
 
-		// TODO validar objeto Persona javax.validation
-
-		// TODO comprobar si no encuentra la persona
-
-		for (int i = 0; i < personas.size(); i++) {
-
-			if (id == personas.get(i).getId()) {
-				personas.remove(i);
-				personas.add(i, persona);
-				break;
+		Set<ConstraintViolation<Persona>> violations = validator.validate(persona);
+		if (!violations.isEmpty()) {
+			ArrayList<String> errores = new ArrayList<String>();
+			for (ConstraintViolation<Persona> violation : violations) {
+				errores.add(violation.getPropertyPath() + ": " + violation.getMessage());
 			}
+			response = Response.status(Status.BAD_REQUEST).entity(errores).build();
+			
+		}else {
 
-		}
+			for (int i = 0; i < personas.size(); i++) {
+	
+				if (id == personas.get(i).getId()) {
+					personas.remove(i);
+					personas.add(i, persona);					
+					response = Response.status(Status.OK).entity(persona).build();
+					break;
+				}
+			}// for
+			
+		}	
 
-		/*
-		 * if (id != usuario.getId()) { LOGGER.warning("No concuerdan los id: " + id +
-		 * ", " + usuario);
-		 * 
-		 * throw new WebApplicationException("No concuerdan los id",
-		 * Status.BAD_REQUEST); }
-		 * 
-		 * if (!usuarios.containsKey(id)) {
-		 * LOGGER.warning("No se ha encontrado el id a modificar: " + id + ", " +
-		 * usuario);
-		 * 
-		 * throw new WebApplicationException("No se ha encontrado el id a modificar",
-		 * Status.NOT_FOUND); }
-		 * 
-		 * usuarios.put(id, usuario);
-		 */
-
-		return persona;
+		return response;
 	}
 
 	@DELETE
@@ -131,6 +130,7 @@ public class PersonaController {
 	public Response eliminar(@PathParam("id") int id) {
 		LOGGER.info("eliminar(" + id + ")");
 
+		Response response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(null).build();
 		Persona persona = null;
 
 		for (int i = 0; i < personas.size(); i++) {
@@ -144,11 +144,12 @@ public class PersonaController {
 		}
 
 		if (persona == null) {
-			return Response.status(Status.NOT_FOUND).build();
+			response = Response.status(Status.NOT_FOUND).build();
 		} else {
 
-			return Response.status(Status.OK).entity(persona).build();
+			response = Response.status(Status.OK).entity(persona).build();
 		}
+		return response;
 	}
 
 }
