@@ -25,7 +25,7 @@ function ajax( metodo, url, datos ){
                     resolve(jsonData);
                 }else{
                     // falla promesa, catch
-                    reject( Error( this.status ));
+                    reject( Error( JSON.parse(this.responseText) ));
                 }               
             }// readyState == 4
 
