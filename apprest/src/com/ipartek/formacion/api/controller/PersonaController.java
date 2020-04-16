@@ -1,5 +1,6 @@
 package com.ipartek.formacion.api.controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -32,11 +33,7 @@ import com.ipartek.formacion.model.dao.PersonaDAO;
 public class PersonaController {
 
 	private static final Logger LOGGER = Logger.getLogger(PersonaController.class.getCanonicalName());
-
-	private static int id = 1;
-	
-	//TODO implementar patron Singleton, deberiamos haber usado getInstance();
-	private static PersonaDAO personaDAO = new PersonaDAO();
+	private static PersonaDAO personaDAO = PersonaDAO.getInstance();
 
 	private ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 	private Validator validator = factory.getValidator();
@@ -44,16 +41,7 @@ public class PersonaController {
 	@Context
 	private ServletContext context;
 
-	private static ArrayList<Persona> personas = new ArrayList<Persona>();
-
-	static {
-		personas.add(new Persona(1, "Arantxa", "avatar1.png", "m"));
-		personas.add(new Persona(2, "Idoia", "avatar2.png", "m"));
-		personas.add(new Persona(3, "Iker", "avatar3.png", "h"));
-		personas.add(new Persona(4, "Hodei", "avatar4.png", "h"));
-		id = 5;
-	}
-
+	
 	public PersonaController() {
 		super();
 	}
@@ -76,10 +64,13 @@ public class PersonaController {
 
 		if (violations.isEmpty()) {
 
-			persona.setId(id);
-			id++;
-			personas.add(persona);
-			response = Response.status(Status.CREATED).entity(persona).build();
+			try {
+				personaDAO.insert(persona);
+				response = Response.status(Status.CREATED).entity(persona).build();
+				
+			}catch (Exception e) {
+				response = Response.status(Status.CONFLICT).entity(persona).build();
+			}	
 
 		} else {
 			ArrayList<String> errores = new ArrayList<String>();
@@ -109,16 +100,13 @@ public class PersonaController {
 			response = Response.status(Status.BAD_REQUEST).entity(errores).build();
 			
 		}else {
-
-			for (int i = 0; i < personas.size(); i++) {
-	
-				if (id == personas.get(i).getId()) {
-					personas.remove(i);
-					personas.add(i, persona);					
-					response = Response.status(Status.OK).entity(persona).build();
-					break;
-				}
-			}// for
+			
+			try {
+				personaDAO.update(persona);
+				response = Response.status(Status.OK).entity(persona).build();
+			}catch (Exception e) {
+				response = Response.status(Status.CONFLICT).entity(persona).build();
+			}	
 			
 		}	
 
@@ -132,22 +120,16 @@ public class PersonaController {
 
 		Response response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(null).build();
 		Persona persona = null;
-
-		for (int i = 0; i < personas.size(); i++) {
-
-			if (id == personas.get(i).getId()) {
-				persona = personas.get(i);
-				personas.remove(i);
-				break;
-			}
-
-		}
-
-		if (persona == null) {
-			response = Response.status(Status.NOT_FOUND).build();
-		} else {
-
+		
+		try {
+			personaDAO.delete(id);
 			response = Response.status(Status.OK).entity(persona).build();
+			
+		}catch (SQLException e) {
+			response = Response.status(Status.CONFLICT).entity(persona).build();
+			
+		}catch (Exception e) {
+			response = Response.status(Status.NOT_FOUND).entity(persona).build();
 		}
 		return response;
 	}
