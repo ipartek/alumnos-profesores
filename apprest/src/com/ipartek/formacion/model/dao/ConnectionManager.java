@@ -1,12 +1,12 @@
 package com.ipartek.formacion.model.dao;
 
 import java.sql.Connection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-import com.ipartek.formacion.api.controller.PersonaController;
 
 public class ConnectionManager {
 
@@ -15,6 +15,7 @@ public class ConnectionManager {
 
 	public static Connection getConnection() {
 
+		
 		conn = null;
 
 		try {
@@ -22,14 +23,16 @@ public class ConnectionManager {
 			DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/mydb");
 
 			if (ds == null) {
+				LOGGER.log( Level.SEVERE, "Data source no encontrado!");
 				throw new Exception("Data source no encontrado!");
 			}
 
 			conn = ds.getConnection();
+			LOGGER.log( Level.INFO, "conexion establecida");
 
 		} catch (Exception e) {
 
-			//TODO logger
+			LOGGER.log( Level.SEVERE, "Exception", e );
 			e.printStackTrace();
 		}
 

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.ipartek.formacion.api.controller.PersonaController;
 import com.ipartek.formacion.model.Persona;
 
 public class PersonaDAO implements IDAO<Persona> {

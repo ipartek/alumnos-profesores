@@ -29,24 +29,20 @@ import com.ipartek.formacion.model.dao.PersonaDAO;
 @Produces("application/json")
 @Consumes("application/json")
 public class PersonaController {
+	
+	@Context
+	private ServletContext context;
 
 	private static final Logger LOGGER = Logger.getLogger(PersonaController.class.getCanonicalName());
 	private static PersonaDAO personaDAO = PersonaDAO.getInstance();
 
 	private ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 	private Validator validator = factory.getValidator();
-
-	@Context
-	private ServletContext context;
-
-	public PersonaController() {
-		super();
-	}
+	
 
 	@GET
 	public ArrayList<Persona> getAll() {
-		LOGGER.info("getAll");
-		// return personas;
+		LOGGER.info("getAll");		
 		ArrayList<Persona> registros = (ArrayList<Persona>) personaDAO.getAll();
 		return registros;
 	}
@@ -58,7 +54,6 @@ public class PersonaController {
 
 		// validar pojo
 		Set<ConstraintViolation<Persona>> violations = validator.validate(persona);
-
 		if (violations.isEmpty()) {
 
 			try {
@@ -131,10 +126,7 @@ public class PersonaController {
 			ResponseBody responseBody = new ResponseBody();
 			responseBody.setData(persona);
 			responseBody.setInformacion("persona eliminada");
-			/*
-			 * responseBody.addError("Esto es una prueba");
-			 * responseBody.addError("Esto es otra prueba");
-			 */
+			//ejemplo envio hipermedia
 			responseBody.getHypermedias()
 					.add(new Hipermedia("listado personas", "GET", "http://localhost:8080/apprest/api/personas/"));
 			responseBody.getHypermedias()

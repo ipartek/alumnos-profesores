@@ -56,3 +56,25 @@ input[type="button"]{
     border:3px solid rgb(22, 151, 236);
     filter: grayscale(0);
 }
+
+/* iconos */
+.fas{
+    float: right;
+    margin-left: 10px;
+    margin-top: 30px;
+    transition: 0.5s;
+}
+
+.fa-trash:hover{
+    color: red;
+    font-size: 1.4em;
+    transition: 0.5s;
+    cursor: pointer;   
+}
+
+.fa-pencil-ruler:hover{
+    color: teal;
+    font-size: 1.4em;
+    transition: 0.5s;
+    cursor: pointer;   
+}
