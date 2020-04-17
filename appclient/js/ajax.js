@@ -18,14 +18,23 @@ function ajax( metodo, url, datos ){
 
                 if ( this.status == 200 || this.status == 201 ){
                     
-                    const jsonData = JSON.parse(this.responseText);    
-                    console.debug( jsonData );
-
                     // funciona promesa, then
-                    resolve(jsonData);
+                    if( this.responseText ){
+                        const jsonData = JSON.parse(this.responseText);    
+                        console.debug( jsonData );
+                        resolve(jsonData);
+                    }else{
+                        resolve();
+                    }                        
+                    
                 }else{
                     // falla promesa, catch
-                    reject( Error( JSON.parse(this.responseText) ));
+                    //reject( Error( JSON.parse(this.responseText) ));
+                    if( this.responseText ){
+                        reject( JSON.parse(this.responseText) );
+                    }else{
+                        reject( this.status );
+                    }
                 }               
             }// readyState == 4
 
