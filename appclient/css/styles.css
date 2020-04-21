@@ -34,6 +34,15 @@ main.container{
     width: 50%;
 }
 
+.col-60{
+    width: 60%;
+}
+
+.col-40{
+    width: 40%;
+}
+
+
 .formulario{
     box-sizing: content-box;
     padding: 10px;
@@ -46,6 +55,11 @@ input[type="button"]{
     padding: 3px 5px;
     border-radius: 10px;
     color: #FFF;
+}
+
+.fright{
+    color: #888;
+    float: right;
 }
 
 .bg-naranja{

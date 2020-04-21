@@ -46,6 +46,8 @@ public class PersonaDAO implements IDAO<Persona> {
 	private static String SQL_DELETE    = "DELETE FROM persona WHERE id = ?; ";
 	private static String SQL_INSERT    = "INSERT INTO persona ( nombre, avatar, sexo) VALUES ( ?, ?, ? ); ";
 	private static String SQL_UPDATE    = "UPDATE persona SET nombre = ?, avatar = ?,  sexo = ? WHERE id = ?; ";
+	private static String SQL_ASIGNAR_CURSO    = "INSERT INTO persona_has_curso (id_persona, id_curso) VALUES ( ?, ?); ";
+	private static String SQL_ELIMINAR_CURSO    = "DELETE FROM persona_has_curso WHERE id_persona = ? AND id_curso = ?;  ";
 	
 
 	private PersonaDAO() {
@@ -87,7 +89,8 @@ public class PersonaDAO implements IDAO<Persona> {
 		}
 
 		// convert hashmap to array
-		return new ArrayList<Persona> ( hmPersonas.values() );
+		registros = new ArrayList<Persona> ( hmPersonas.values() );
+		return registros;
 	}
 
 	@Override
@@ -105,7 +108,7 @@ public class PersonaDAO implements IDAO<Persona> {
 			
 				HashMap<Integer, Persona> hmPersonas = new HashMap<Integer, Persona>();
 				if( rs.next() ) {					
-					mapper(rs, hmPersonas);
+					registro = mapper(rs, hmPersonas);
 				}else {
 					throw new Exception("Registro no encontrado para id = " + id);
 				}
@@ -209,8 +212,55 @@ public class PersonaDAO implements IDAO<Persona> {
 		return pojo;
 	}
 	
+	public boolean asignarCurso( int idPersona, int idCurso ) throws Exception, SQLException {
+		boolean resul = false;
+		
+		try (Connection con = ConnectionManager.getConnection();
+				PreparedStatement pst = con.prepareStatement(SQL_ASIGNAR_CURSO);
+		) {
+
+			pst.setInt(1, idPersona);
+			pst.setInt(2, idCurso);
+			LOGGER.info(pst.toString());
+			
+			//eliminamos la persona
+			int affetedRows = pst.executeUpdate();	
+			if (affetedRows == 1) {
+				resul = true;
+			}else {
+				resul = false;		
+			}
+		}
+		
+		return resul;
+	}
 	
-	private void mapper( ResultSet rs, HashMap<Integer, Persona> hm ) throws SQLException {
+	public boolean eliminarCurso( int idPersona, int idCurso ) throws Exception, SQLException {
+		boolean resul = false;
+		
+		try (Connection con = ConnectionManager.getConnection();
+				PreparedStatement pst = con.prepareStatement(SQL_ELIMINAR_CURSO);
+		) {
+
+			pst.setInt(1, idPersona);
+			pst.setInt(2, idCurso);
+			LOGGER.info(pst.toString());
+			
+			//eliminamos la persona
+			int affetedRows = pst.executeUpdate();	
+			if (affetedRows == 1) {
+				resul = true;
+			}else {
+				throw new Exception("No se encontrado registro id_persona =" + idPersona + " id_curso=" + idCurso );		
+			}
+		}
+		
+		return resul;
+	}
+	
+	
+	
+	private Persona mapper( ResultSet rs, HashMap<Integer, Persona> hm ) throws SQLException {
 		
 		
 		int key = rs.getInt("persona_id"); 
@@ -242,8 +292,9 @@ public class PersonaDAO implements IDAO<Persona> {
 		//actualizar hashmap
 		hm.put(key, p);
 		
-		
+		return p;
 	}
 	
+
 
 }

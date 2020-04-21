@@ -26,7 +26,7 @@
         </div>
 
         <div class="row">
-            <div class="col">
+            <div class="col-40">
                 <input type="button" value="Nueva Persona" onclick="seleccionar()">
                 <ul id="alumnos">
                     <li>Cargando datos....</li>
@@ -35,33 +35,44 @@
                     -->
                 </ul>
             </div>
-            <div class="col formulario">
+            <div class="col-60 formulario">
                 
+                <div class="row">
                
-               
+                    <div class="col">
 
-                <input type="text" id="inputId" placeholder="id" readonly>
-                <br>
-                <input type="text" id="inputNombre" placeholder="Escribe nombre">
-                <br>
-                <input type="text" id="inputAvatar" readonly="readonly" placeholder="url imagen">
+                        <input type="text" id="inputId" placeholder="id" readonly>
+                        <br>
+                        <input type="text" id="inputNombre" placeholder="Escribe nombre">
+                        <br>
+                        <input type="text" id="inputAvatar" readonly="readonly" placeholder="url imagen">
+        
+                       
+                       
+                        <br>
+                        
+                            <input checked="checked" type="radio" name="sexo" id="sexoh" value="h">
+                            <label for="sexoh">Hombre
+                            <br>
+                            <input type="radio" name="sexo" id="sexom" value="m">
+                            <label for="sexom">Mujer
+                            <br>
+        
+                        <br>
+                       
+                        <div id="gallery">                    
+                        </div>
+                    </div>
 
+                    <div class="col">
+                        <h2>Cursos</h2>
+                        <ul id="cursosAlumno">
+                            <li>sin cursos</li>
+                        </ul>
+                    </div>
+          
                
-               
-                <br>
-                
-                    <input checked="checked" type="radio" name="sexo" id="sexoh" value="h">
-                    <label for="sexoh">Hombre
-                    <br>
-                    <input type="radio" name="sexo" id="sexom" value="m">
-                    <label for="sexom">Mujer
-                    <br>
-
-                <br>
-               
-                <div id="gallery">                    
                 </div>
-               
 
                 <input type="button" value="Guardar" onclick="guardar()">
 
@@ -69,6 +80,8 @@
                
 
             </div>
+            <!-- col-60 formulario -->
+
         </div>
 
     </main>

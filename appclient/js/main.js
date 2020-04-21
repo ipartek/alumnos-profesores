@@ -6,6 +6,7 @@
 const endpoint = 'http://localhost:8080/apprest/api/';
 let personas = [];
 let cursos = [];
+let personaSeleccionada = {};
 
 window.addEventListener('load', init() );
 
@@ -129,6 +130,7 @@ function cargarCursos( filtro = '' ){
                                         <img src="${el.imagen}" alt="${el.nombre}">
                                         <h3>${el.nombre}</h3>
                                         <span>${el.precio} €</span>
+                                        <span onClick="asignarCurso( 0, ${el.id})" >[x] Asignar</span>
                                     </li>` 
             );
         })
@@ -172,7 +174,9 @@ function maquetarLista(elementos){
     elementos.forEach( (p,i) => 
         lista.innerHTML += 
             `<li>
-                <img src="${p.avatar}" alt="avatar">${p.nombre}
+                <img src="${p.avatar}" alt="avatar">
+                ${p.nombre}
+                <span class="fright" >${p.cursos.length} cursos</span>
                 <i class="fas fa-trash" onclick="eliminar(${p.id})"></i>
                 <i class="fas fa-pencil-ruler" onclick="seleccionar(${p.id})"></i>            
             </li>` 
@@ -185,7 +189,7 @@ function maquetarLista(elementos){
  * @param {*} id id del alumno
  */
 function eliminar( id = 0){
-    let personaSeleccionada = personas.find( el => el.id == id);
+    personaSeleccionada = personas.find( el => el.id == id);
     console.debug('click eliminar persona %o', personaSeleccionada);
     const mensaje = `¿Estas seguro que quieres eliminar  a ${personaSeleccionada.nombre} ?`;
     if ( confirm(mensaje) ){
@@ -212,9 +216,14 @@ function eliminar( id = 0){
 function seleccionar( id = 0 ){
 
     // para buscar por indice usar find
-    let personaSeleccionada = personas.find( el=> el.id == id);
+    personaSeleccionada = personas.find( el=> el.id == id);
     if ( !personaSeleccionada ){
-        personaSeleccionada = { "id":0, "nombre": "sin nombre" , "avatar" : "img/avatar7.png", "sexo": "h" };
+        personaSeleccionada = { "id":0, 
+                                "nombre": "sin nombre" , 
+                                "avatar" : "img/avatar7.png", 
+                                "sexo": "h",
+                                "cursos": []
+                             };
     }
     
     console.debug('click persona seleccionada %o', personaSeleccionada);
@@ -246,6 +255,20 @@ function seleccionar( id = 0 ){
         checkHombre.checked = '';
         checkMujer.checked = 'checked';
     }
+
+    // pintar cursos del alumno
+    let listaCursosAlumno = document.getElementById('cursosAlumno');
+    listaCursosAlumno.innerHTML = '';
+    personaSeleccionada.cursos.forEach( el => {
+
+        listaCursosAlumno.innerHTML += `<li>
+                                            ${el.nombre}
+                                            <i class="fas fa-trash" onclick="eliminarCurso(${personaSeleccionada.id},${el.id})"></i>
+                                        </li>`;
+
+    });
+
+
 
 } // seleccionar
 
@@ -346,6 +369,53 @@ function selectAvatar(evento){
     iAvatar.value = evento.target.dataset.path;
 
 }
+
+/**
+ * 
+ * @param {*} idPersona 
+ * @param {*} idCurso 
+ */
+function eliminarCurso( idPersona, idCurso ){
+
+    console.debug(`click eliminarCurso idPersona=${idPersona} idCurso=${idCurso}`);
+
+    const url = endpoint + 'personas/' + idPersona + "/curso/" + idCurso;
+    ajax('DELETE', url, undefined)
+    .then( data => {
+        alert('Curso Eliminado');
+
+        //FIXME falta quitar curso del formulario, problema Asincronismo
+        cargarAlumnos();
+        seleccionar(idPersona);
+    })
+    .catch( error => alert(error));
+
+}//eliminarCurso
+
+
+/**
+ * 
+ * @param {*} idPersona 
+ * @param {*} idCurso 
+ */
+function asignarCurso( idPersona = 0, idCurso ){
+
+    idPersona = (idPersona != 0) ? idPersona : personaSeleccionada.id;
+
+    console.debug(`click asignarCurso idPersona=${idPersona} idCurso=${idCurso}`);
+
+    const url = endpoint + 'personas/' + idPersona + "/curso/" + idCurso;
+    ajax('POST', url, undefined)
+    .then( data => {
+        alert('Curso Asignado');
+
+        //FIXME falta pintar curso del formulario, problema Asincronismo
+        cargarAlumnos();
+        seleccionar(idPersona);
+    })
+    .catch( error => alert(error));
+
+}//asignarCurso
 
 
 
