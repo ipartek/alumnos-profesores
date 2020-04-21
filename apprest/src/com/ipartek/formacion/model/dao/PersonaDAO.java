@@ -5,9 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.ipartek.formacion.model.Curso;
 import com.ipartek.formacion.model.Persona;
 
 public class PersonaDAO implements IDAO<Persona> {
@@ -16,8 +18,31 @@ public class PersonaDAO implements IDAO<Persona> {
 	
 	private static PersonaDAO INSTANCE = null;
 	
-	private static String SQL_GET_ALL   = "SELECT id, nombre, avatar, sexo FROM persona ORDER BY id DESC LIMIT 500; ";
-	private static String SQL_GET_BY_ID = "SELECT id, nombre, avatar, sexo FROM persona WHERE id = ?; ";
+	private static String SQL_GET_ALL   = "SELECT \n" + 
+											"	p.id as persona_id,\n" + 
+											"	p.nombre as persona_nombre,\n" + 
+											"	p.avatar as persona_avatar,\n" + 
+											"	p.sexo as persona_sexo,\n" + 
+											"	c.id as curso_id,\n" + 
+											"	c.nombre as curso_nombre,\n" + 
+											"	c.precio as curso_precio,\n" + 
+											"	c.imagen  as curso_imagen\n" + 
+											" FROM (persona p LEFT JOIN persona_has_curso pc ON p.id = pc.id_persona)\n" + 
+											"     LEFT JOIN curso c ON pc.id_curso = c.id LIMIT 500;  ";
+	
+	private static String SQL_GET_BY_ID = "SELECT \n" + 
+											"	p.id as persona_id,\n" + 
+											"	p.nombre as persona_nombre,\n" + 
+											"	p.avatar as persona_avatar,\n" + 
+											"	p.sexo as persona_sexo,\n" + 
+											"	c.id as curso_id,\n" + 
+											"	c.nombre as curso_nombre,\n" + 
+											"	c.precio as curso_precio,\n" + 
+											"	c.imagen  as curso_imagen\n" + 
+											" FROM (persona p LEFT JOIN persona_has_curso pc ON p.id = pc.id_persona)\n" + 
+											"     LEFT JOIN curso c ON pc.id_curso = c.id WHERE p.id = ? ;   ";
+	
+	
 	private static String SQL_DELETE    = "DELETE FROM persona WHERE id = ?; ";
 	private static String SQL_INSERT    = "INSERT INTO persona ( nombre, avatar, sexo) VALUES ( ?, ?, ? ); ";
 	private static String SQL_UPDATE    = "UPDATE persona SET nombre = ?, avatar = ?,  sexo = ? WHERE id = ?; ";
@@ -41,6 +66,8 @@ public class PersonaDAO implements IDAO<Persona> {
 		LOGGER.info("getAll");
 		
 		ArrayList<Persona> registros = new ArrayList<Persona>();
+		HashMap<Integer, Persona> hmPersonas = new HashMap<Integer, Persona>();
+		
 		try (Connection con = ConnectionManager.getConnection();
 				PreparedStatement pst = con.prepareStatement(SQL_GET_ALL);
 				ResultSet rs = pst.executeQuery();
@@ -50,7 +77,7 @@ public class PersonaDAO implements IDAO<Persona> {
 			LOGGER.info(pst.toString());
 			
 			while( rs.next() ) {				
-				registros.add( mapper(rs) );				
+				 mapper(rs, hmPersonas );			
 			}
 			
 			
@@ -59,7 +86,8 @@ public class PersonaDAO implements IDAO<Persona> {
 			e.printStackTrace();
 		}
 
-		return registros;
+		// convert hashmap to array
+		return new ArrayList<Persona> ( hmPersonas.values() );
 	}
 
 	@Override
@@ -75,9 +103,9 @@ public class PersonaDAO implements IDAO<Persona> {
 			
 			try( ResultSet rs = pst.executeQuery() ){
 			
+				HashMap<Integer, Persona> hmPersonas = new HashMap<Integer, Persona>();
 				if( rs.next() ) {					
-					registro = mapper(rs);					
-					
+					mapper(rs, hmPersonas);
 				}else {
 					throw new Exception("Registro no encontrado para id = " + id);
 				}
@@ -182,13 +210,39 @@ public class PersonaDAO implements IDAO<Persona> {
 	}
 	
 	
-	private Persona mapper( ResultSet rs ) throws SQLException {
-		Persona p = new Persona();
-		p.setId( rs.getInt("id") );
-		p.setNombre( rs.getString("nombre"));
-		p.setAvatar( rs.getString("avatar"));
-		p.setSexo( rs.getString("sexo"));
-		return p;
+	private void mapper( ResultSet rs, HashMap<Integer, Persona> hm ) throws SQLException {
+		
+		
+		int key = rs.getInt("persona_id"); 
+		
+		Persona p = hm.get(key);
+		
+		// si no existe en el hm se crea
+		if ( p == null ) {
+			
+			p = new Persona();
+			p.setId( key  );
+			p.setNombre( rs.getString("persona_nombre"));
+			p.setAvatar( rs.getString("persona_avatar"));
+			p.setSexo( rs.getString("persona_sexo"));
+						
+		}
+		
+		// se añade el curso
+		int idCurso = rs.getInt("curso_id");
+		if ( idCurso != 0) {
+			Curso c = new Curso();
+			c.setId(idCurso);
+			c.setNombre(rs.getString("curso_nombre"));
+			c.setPrecio( rs.getFloat("curso_precio"));
+			c.setImagen(rs.getString("curso_imagen"));			
+			p.getCursos().add(c);
+		}	
+		
+		//actualizar hashmap
+		hm.put(key, p);
+		
+		
 	}
 	
 
