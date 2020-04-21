@@ -106,18 +106,26 @@ input[type="button"]{
   /* Modal Content */
   .modal-content {
     background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
+    margin: auto;    
     border: 1px solid #888;
     width: 80%;
+    height: 60vh;
+    
+    /*
+    overflow: hidden;
+    overflow-y: scroll;
+    */
   }
+  
   
   /* The Close Button */
   .close {
-    color: #aaaaaa;
+    color: #FFF;
     float: right;
     font-size: 28px;
     font-weight: bold;
+    margin-right: 10px;
+    
   }
   
   .close:hover,
@@ -126,3 +134,39 @@ input[type="button"]{
     text-decoration: none;
     cursor: pointer;
   }
+
+  .modal h2 {
+      background-color: teal;
+      color: #FFF;
+      padding: 10px;
+  }
+
+  .modal .content-filtro{
+      padding: 10px 20px;      
+  }
+
+  .modal .content-filtro input{
+     width: 100%;
+  }
+
+  .modal ol{
+      padding: 20px;
+     
+  }
+  .modal li{    
+      display: flex;
+      justify-content: space-between;
+  }
+
+  .modal img{
+      height: 50px;
+      width: 50px;
+  }    
+
+  .modal h3{    
+    font-weight: 600;
+  }    
+
+  .modal span{    
+      color: #888;
+  }    

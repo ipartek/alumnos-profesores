@@ -2,9 +2,8 @@
 
 //VARIABLES GLOBALES
 
-//const endpoint = 'http://127.0.0.1:5500/js/data/personas.json';
-//TODO quitar personas de endpoint
-const endpoint = 'http://localhost:8080/apprest/api/personas/';
+//const endpoint = 'http://127.0.0
+const endpoint = 'http://localhost:8080/apprest/api/';
 let personas = [];
 let cursos = [];
 
@@ -18,7 +17,7 @@ function init(){
 
     listener();    
     initGallery();
-    pintarLista();
+    cargarAlumnos();
     cargarCursos();
 
 }//init
@@ -112,15 +111,39 @@ function filtro(){
 
 }// filtro
 
+/**
+ * Carga todos los cursos
+ * @param {*} filtro por nombre de curso, busca coincidencias
+ */
+function cargarCursos( filtro = '' ){
+    console.trace('cargar cursos');   
+    const url = endpoint + 'cursos/?filtro=' + filtro;
+    ajax( 'GET', url, undefined )
+        .then( data => {
+             cursos = data;
+             // cargar cursos en lista
+             let lista = document.getElementById('listaCursos');
+             lista.innerHTML = '';
+             cursos.forEach( el => 
+                lista.innerHTML += `<li>
+                                        <img src="${el.imagen}" alt="${el.nombre}">
+                                        <h3>${el.nombre}</h3>
+                                        <span>${el.precio} €</span>
+                                    </li>` 
+            );
+        })
+        .catch( error => alert('No se pueden cargar cursos' + error));
+}//cargarCursos
+
 
 /**
  * Obtiene los datos del servicio rest y pinta la lista de Alumnos
  */
-function pintarLista(){
+function cargarAlumnos(){
 
-    console.trace('pintarLista');
-
-    const promesa = ajax("GET", endpoint, undefined);
+    console.trace('cargarAlumnos');
+    const url = endpoint + 'personas/';
+    const promesa = ajax("GET", url , undefined);
     promesa
     .then( data => {
             console.trace('promesa resolve'); 
@@ -133,7 +156,7 @@ function pintarLista(){
     });
 
     
-}// pintarLista
+}// cargarAlumnos
 
 
 /**
@@ -150,8 +173,8 @@ function maquetarLista(elementos){
         lista.innerHTML += 
             `<li>
                 <img src="${p.avatar}" alt="avatar">${p.nombre}
-                <i class="fas fa-trash" onclick="eliminar(${i})"></i>
-                <i class="fas fa-pencil-ruler" onclick="seleccionar(${i})"></i>            
+                <i class="fas fa-trash" onclick="eliminar(${p.id})"></i>
+                <i class="fas fa-pencil-ruler" onclick="seleccionar(${p.id})"></i>            
             </li>` 
     );
 } //maquetarLista
@@ -159,20 +182,20 @@ function maquetarLista(elementos){
 
 /**
  * Se ejecuta al pulsar el boton de la papeleray llama al servicio rest para DELETE
- * @param {*} indice posicion del alumno dentro del array personas
+ * @param {*} id id del alumno
  */
-function eliminar(indice){
-    let personaSeleccionada = personas[indice];
+function eliminar( id = 0){
+    let personaSeleccionada = personas.find( el => el.id == id);
     console.debug('click eliminar persona %o', personaSeleccionada);
     const mensaje = `¿Estas seguro que quieres eliminar  a ${personaSeleccionada.nombre} ?`;
     if ( confirm(mensaje) ){
 
-        const url = endpoint + personaSeleccionada.id;
+        const url = endpoint + 'personas/' + personaSeleccionada.id;
         ajax('DELETE', url, undefined)
-            .then( data =>  pintarLista() )
+            .then( data =>  cargarAlumnos() )
             .catch( error => {
-                console.warn('promesa rejectada');
-                alert(error);
+                console.warn('promesa rejectada %o', error );
+                alert(error.informacion);
             });
 
     }
@@ -180,17 +203,18 @@ function eliminar(indice){
 
 
 /**
+ * 
  * Se ejecuta al pulsar el boton de editar(al lado de la papelera) o boton 'Nueva Persona' 
  * Rellena el formulario con los datos de la persona
- * @param {*} indice posicion del alumno dentro del array personas, si no existe en el array usa personaSeleccionada
+ * @param {*} id  id del alumno, si no existe en el array usa personaSeleccionada
  * @see personaSeleccionada = { "id":0, "nombre": "sin nombre" , "avatar" : "img/avatar7.png", "sexo": "h" };
  */
-function seleccionar(indice){
+function seleccionar( id = 0 ){
 
-    let  personaSeleccionada = { "id":0, "nombre": "sin nombre" , "avatar" : "img/avatar7.png", "sexo": "h" };
-
-    if ( indice > -1 ){
-        personaSeleccionada = personas[indice];
+    // para buscar por indice usar find
+    let personaSeleccionada = personas.find( el=> el.id == id);
+    if ( !personaSeleccionada ){
+        personaSeleccionada = { "id":0, "nombre": "sin nombre" , "avatar" : "img/avatar7.png", "sexo": "h" };
     }
     
     console.debug('click persona seleccionada %o', personaSeleccionada);
@@ -251,8 +275,8 @@ function guardar(){
     //CREAR
     if ( id == 0 ){ 
         console.trace('Crear nueva persona');
-       
-        ajax('POST',endpoint, persona)
+        const url = endpoint + 'personas/';
+        ajax('POST',url , persona)
             .then( data => {                
                 alert( persona.nombre + ' ya esta con nosotros ');
                 //limpiar formulario
@@ -262,7 +286,7 @@ function guardar(){
                 document.getElementById('sexoh').checked = true;
                 document.getElementById('sexom').checked = false;
 
-                pintarLista();
+                cargarAlumnos();
             })
             .catch( error => {
                 console.warn('promesa rejectada %o', error);
@@ -274,11 +298,11 @@ function guardar(){
     }else{
         console.trace('Modificar persona');
 
-        const url = endpoint + persona.id;
+        const url = endpoint + 'personas/' + persona.id;
         ajax('PUT', url , persona)
             .then( data => {
                 alert( persona.nombre + ' modificado con exito ');
-                pintarLista();
+                cargarAlumnos();
             })
             .catch( error => {
                 console.warn('No se pudo actualizar %o', error);
@@ -323,26 +347,7 @@ function selectAvatar(evento){
 
 }
 
-function cargarCursos( filtro = '' ){
-    console.trace('cargar cursos');   
-    const urlCursos = 'http://localhost:8080/apprest/api/cursos/?filtro=' + filtro;
-    ajax( 'GET', urlCursos, undefined )
-        .then( data => {
-             cursos = data;
-             // cargar cursos en lista
-             let lista = document.getElementById('listaCursos');
-             lista.innerHTML = '';
-             cursos.forEach( el => 
-                lista.innerHTML += `<li>
-                                        <h3>${el.nombre}</h3>
-                                        <span>${el.precio} €</span>
-                                    </li>` 
-            );
-        })
-        .catch( error => alert('No se pueden cargar cursos' + error));
 
-
-}
 
 
 

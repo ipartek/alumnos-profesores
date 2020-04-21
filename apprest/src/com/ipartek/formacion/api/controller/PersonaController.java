@@ -118,12 +118,11 @@ public class PersonaController {
 		LOGGER.info("eliminar(" + id + ")");
 
 		Response response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(null).build();
+		ResponseBody responseBody = new ResponseBody();
 		Persona persona = null;
 
 		try {
-			persona = personaDAO.delete(id);
-
-			ResponseBody responseBody = new ResponseBody();
+			persona = personaDAO.delete(id);			
 			responseBody.setData(persona);
 			responseBody.setInformacion("persona eliminada");
 			//ejemplo envio hipermedia
@@ -135,10 +134,12 @@ public class PersonaController {
 			response = Response.status(Status.OK).entity(responseBody).build();
 
 		} catch (SQLException e) {
-			response = Response.status(Status.CONFLICT).entity(e.getMessage()).build();
+			responseBody.setInformacion("No se puede elminar porque tiene cursos activos");
+			response = Response.status(Status.CONFLICT).entity(responseBody).build();
 
 		} catch (Exception e) {
-			response = Response.status(Status.NOT_FOUND).entity(e.getMessage()).build();
+			responseBody.setInformacion("persona no encontrada");
+			response = Response.status(Status.NOT_FOUND).entity(responseBody).build();
 		}
 		return response;
 	}

@@ -114,7 +114,7 @@ public class PersonaDAO implements IDAO<Persona> {
 			
 		} catch (SQLException e) {
 
-			throw new Exception("No se puede eliminar registro " + e.getMessage() );
+			throw new SQLException("No se puede eliminar registro " + e.getMessage() );
 		}
 
 		return registro;
