@@ -3,9 +3,10 @@
 //VARIABLES GLOBALES
 
 //const endpoint = 'http://127.0.0.1:5500/js/data/personas.json';
+//TODO quitar personas de endpoint
 const endpoint = 'http://localhost:8080/apprest/api/personas/';
 let personas = [];
-
+let cursos = [];
 
 window.addEventListener('load', init() );
 
@@ -18,22 +19,61 @@ function init(){
     listener();    
     initGallery();
     pintarLista();
+    cargarCursos();
 
 }//init
 
 
 /**
  * Inicializamos los listener de index.hml
- * para el selector de sexo y busqueda por nombre
+ * 1) selector de sexo y busqueda por nombre
+ * 2) filtro de cursos
+ * 3) modal
  * @see function filtro
  */
 function listener(){
 
+    // 1
     let selectorSexo = document.getElementById('selectorSexo');
     let inputNombre = document.getElementById('inombre');
 
     selectorSexo.addEventListener('change', filtro );
     inputNombre.addEventListener('keyup',  filtro );
+
+    // 2 filtro de cursos
+    let filtroCursos = document.getElementById('filtroCurso');
+    filtroCursos.addEventListener('keyup',  function(event) {
+        let filtroValor = filtroCursos.value.trim();        
+        if ( filtroValor.length >= 3 ){
+            console.debug('filtroCursos keyup ' + filtroValor );
+            cargarCursos(filtroValor);
+        }else{
+            cargarCursos();
+        }
+
+    });
+    
+
+
+    // 3 Modal
+    var modal = document.getElementById("modal");
+    var btn = document.getElementById("btnModal");    
+    var spanClose = document.getElementById("close");
+
+    // When the user clicks the button, open the modal 
+    btn.onclick = () =>  modal.style.display = "block";
+
+    // When the user clicks on <span> (x), close the modal
+    spanClose.onclick = () => modal.style.display = "none";
+    
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = (event) => {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+
 
 }// listener
 
@@ -282,3 +322,27 @@ function selectAvatar(evento){
     iAvatar.value = evento.target.dataset.path;
 
 }
+
+function cargarCursos( filtro = '' ){
+    console.trace('cargar cursos');   
+    const urlCursos = 'http://localhost:8080/apprest/api/cursos/?filtro=' + filtro;
+    ajax( 'GET', urlCursos, undefined )
+        .then( data => {
+             cursos = data;
+             // cargar cursos en lista
+             let lista = document.getElementById('listaCursos');
+             lista.innerHTML = '';
+             cursos.forEach( el => 
+                lista.innerHTML += `<li>
+                                        <h3>${el.nombre}</h3>
+                                        <span>${el.precio} €</span>
+                                    </li>` 
+            );
+        })
+        .catch( error => alert('No se pueden cargar cursos' + error));
+
+
+}
+
+
+

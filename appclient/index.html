@@ -64,12 +64,36 @@
                
 
                 <input type="button" value="Guardar" onclick="guardar()">
+
+                <input id="btnModal" type="button" class="bg-naranja" value="Asinar Curso">
                
 
             </div>
         </div>
 
     </main>
+
+
+
+    <!-- The Modal -->
+    <div id="modal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span id="close" class="close">&times;</span>
+            <h2>Listado Cursos</h2>
+            <div class="content-filtro">
+                <i class="fas fa-search"></i>
+                <input type="search" id="filtroCurso" placeholder="Escribe nombre del curso">                
+            </div>
+            <ol id="listaCursos">
+                <li>Cargando....</li>
+            </ol>
+        </div>
+    
+    </div>
+     <!-- /The Modal -->
+
 
     <script src="js/ajax.js"></script>
     <script src="js/main.js"></script>
