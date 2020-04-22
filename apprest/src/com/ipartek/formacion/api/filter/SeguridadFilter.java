@@ -31,13 +31,17 @@ public class SeguridadFilter implements ContainerRequestFilter {
 		LOGGER.info("entramos method=" + method + " uriPath=" + path);
 		
 		
-		HttpSession session = request.getSession(false);
-	    if (null == session || null == session.getAttribute("usuarioLogeado")) {
-	    	LOGGER.info("SIN PERMISOS");
-	    	
-	    	Response response = Response.status(Status.UNAUTHORIZED).entity(null).build();
-			requestContext.abortWith(response );
-	    }
+		if ( !"/apprest/api/login/".equalsIgnoreCase(path) ) {
+				
+		
+				HttpSession session = request.getSession(false);
+			    if (null == session || null == session.getAttribute("usuarioLogeado")) {
+			    	LOGGER.info("SIN PERMISOS");
+			    	
+			    	Response response = Response.status(Status.UNAUTHORIZED).entity(null).build();
+					requestContext.abortWith(response );
+			    }
+		}	    
 		
 	    LOGGER.info("termina filtro");
 	    

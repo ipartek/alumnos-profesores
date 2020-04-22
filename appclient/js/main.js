@@ -21,6 +21,7 @@ window.addEventListener('load', init() );
 function init(){
     console.debug('Document Load and Ready');    
 
+    checkLogin();
     listener();    
     initGallery();
     cargarAlumnos();
@@ -30,6 +31,22 @@ function init(){
 
 }//init
 
+/**
+ * Comprueba que se conecte al servicio rest
+ * Si no redirect al login.html
+ */
+function checkLogin(){
+    console.trace('checkLogin');
+    const url = endpoint + 'personas/';
+    ajax('GET', url, undefined )
+        .then() // no hacemos nada
+        .catch( error => {
+            console.debug('Redireccion al login');
+            alert('redireccionamos a login');
+            window.location.replace("login.html");
+        });
+
+}// checkLogin
 
 /**
  * Inicializamos los listener de index.hml
