@@ -53,6 +53,10 @@ public class PersonaController {
 	@POST
 	public Response insert(Persona persona) {
 		LOGGER.info("insert(" + persona + ")");
+		
+		
+		
+		
 		Response response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(null).build();
 
 		// validar pojo
