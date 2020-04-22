@@ -6,7 +6,12 @@
 const endpoint = 'http://localhost:8080/apprest/api/';
 let personas = [];
 let cursos = [];
-let personaSeleccionada = {};
+let personaSeleccionada = { "id":0, 
+                            "nombre": "sin nombre" , 
+                            "avatar" : "img/avatar7.png", 
+                            "sexo": "h",
+                            "cursos": []
+                          };
 
 window.addEventListener('load', init() );
 
@@ -19,7 +24,9 @@ function init(){
     listener();    
     initGallery();
     cargarAlumnos();
-    cargarCursos();
+    
+    // mejor al mostrar la modal
+    // cargarCursos();
 
 }//init
 
@@ -56,20 +63,27 @@ function listener(){
 
 
     // 3 Modal
+    
     var modal = document.getElementById("modal");
     var btn = document.getElementById("btnModal");    
     var spanClose = document.getElementById("close");
 
     // When the user clicks the button, open the modal 
-    btn.onclick = () =>  modal.style.display = "block";
+    btn.onclick = () =>  {
+        cargarCursos();
+        modal.style.display = "block";
+        modal.classList.add('animated','zoomIn');
+    }
 
     // When the user clicks on <span> (x), close the modal
-    spanClose.onclick = () => modal.style.display = "none";
+    spanClose.onclick = () => {
+        modal.style.display = "none";        
+    }    
     
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = (event) => {
         if (event.target == modal) {
-            modal.style.display = "none";
+            modal.style.display = "none";            
         }
     }
 
@@ -133,6 +147,8 @@ function cargarCursos( filtro = '' ){
                                         <span onClick="asignarCurso( 0, ${el.id})" >[x] Asignar</span>
                                     </li>` 
             );
+            seleccionar(personaSeleccionada.id);   
+
         })
         .catch( error => alert('No se pueden cargar cursos' + error));
 }//cargarCursos
@@ -215,6 +231,11 @@ function eliminar( id = 0){
  */
 function seleccionar( id = 0 ){
 
+
+    let cntFormulario = document.getElementById('content-formulario');
+    cntFormulario.style.display = 'block';
+    cntFormulario.classList.add('animated','fadeInRight');
+
     // para buscar por indice usar find
     personaSeleccionada = personas.find( el=> el.id == id);
     if ( !personaSeleccionada ){
@@ -263,7 +284,7 @@ function seleccionar( id = 0 ){
 
         listaCursosAlumno.innerHTML += `<li>
                                             ${el.nombre}
-                                            <i class="fas fa-trash" onclick="eliminarCurso(${personaSeleccionada.id},${el.id})"></i>
+                                            <i class="fas fa-trash" onclick="eliminarCurso(event, ${personaSeleccionada.id},${el.id})"></i>
                                         </li>`;
 
     });
@@ -375,7 +396,7 @@ function selectAvatar(evento){
  * @param {*} idPersona 
  * @param {*} idCurso 
  */
-function eliminarCurso( idPersona, idCurso ){
+function eliminarCurso(event, idPersona, idCurso ){
 
     console.debug(`click eliminarCurso idPersona=${idPersona} idCurso=${idCurso}`);
 
@@ -384,9 +405,23 @@ function eliminarCurso( idPersona, idCurso ){
     .then( data => {
         alert('Curso Eliminado');
 
-        //FIXME falta quitar curso del formulario, problema Asincronismo
-        cargarAlumnos();
-        seleccionar(idPersona);
+        /* quitar curso del formulario mediante el evento del icono de la papelera
+        
+            <li>
+                JavaEE
+                <i class="fas fa-trash" onclick="eliminarCurso(event, 16,1)"></i>
+            </li>
+
+            event.target               => <i class="fas fa-trash" onclick="eliminarCurso(event, 16,1)"></i>
+            event.target.parentElement => <li> ..... </li>    
+
+        */
+      
+       //  event.target.parentElement.style.display = 'none';
+       event.target.parentElement.classList.add('animated', 'bounceOut');
+        
+       cargarAlumnos();
+        
     })
     .catch( error => alert(error));
 
@@ -407,11 +442,23 @@ function asignarCurso( idPersona = 0, idCurso ){
     const url = endpoint + 'personas/' + idPersona + "/curso/" + idCurso;
     ajax('POST', url, undefined)
     .then( data => {
-        alert('Curso Asignado');
 
-        //FIXME falta pintar curso del formulario, problema Asincronismo
+        // cerrar modal
+        document.getElementById("modal").style.display = 'none';    
+
+        alert(data.informacion);
+
+        const curso = data.data;
+        // pintar curso al final de la lista        
+        let lista = document.getElementById('cursosAlumno');        
+        lista.innerHTML += `<li class="animated bounceIn">  
+                                ${curso.nombre}
+                                <i class="fas fa-trash" onclick="eliminarCurso(event, ${idPersona},${curso.id})"></i>    
+                            </li>`;
+        //lista.classList.add('animated', 'bounceIn', 'delay-1s');                            
+        
         cargarAlumnos();
-        seleccionar(idPersona);
+        
     })
     .catch( error => alert(error));
 

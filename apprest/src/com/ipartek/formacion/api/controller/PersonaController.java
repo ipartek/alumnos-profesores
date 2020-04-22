@@ -22,7 +22,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.ipartek.formacion.model.Curso;
 import com.ipartek.formacion.model.Persona;
+import com.ipartek.formacion.model.dao.CursoDAO;
 import com.ipartek.formacion.model.dao.PersonaDAO;
 
 @Path("/personas")
@@ -35,6 +37,7 @@ public class PersonaController {
 
 	private static final Logger LOGGER = Logger.getLogger(PersonaController.class.getCanonicalName());
 	private static PersonaDAO personaDAO = PersonaDAO.getInstance();
+	private static CursoDAO cursoDAO = CursoDAO.getInstance();
 
 	private ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 	private Validator validator = factory.getValidator();
@@ -154,10 +157,10 @@ public class PersonaController {
 
 		try {		
 			personaDAO.asignarCurso(idPersona, idCurso);
-			Persona p = personaDAO.getById(idPersona);
+			Curso c = cursoDAO.getById(idCurso);
 			
 			responseBody.setInformacion("curso asigando con exito");
-			responseBody.setData(p);
+			responseBody.setData(c);
 			response = Response.status(Status.CREATED).entity(responseBody).build();
 			
 		} catch (Exception e) {			

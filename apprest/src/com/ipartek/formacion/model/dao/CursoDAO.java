@@ -5,10 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
 import com.ipartek.formacion.model.Curso;
+import com.ipartek.formacion.model.Persona;
 
 public class CursoDAO implements IDAO<Curso> {
 	
@@ -17,6 +19,7 @@ public class CursoDAO implements IDAO<Curso> {
 	private static CursoDAO INSTANCE = null;
 	
 	private static String SQL_GET_ALL   = "SELECT id, nombre, precio, imagen FROM curso ORDER BY id DESC LIMIT 100; ";
+	private static String SQL_GET_BY_ID   = "SELECT id, nombre, precio, imagen FROM curso WHERE id = ?; ";
 	private static String SQL_GET_LIKE_NOMBRE   = "SELECT id, nombre, precio, imagen FROM curso WHERE nombre LIKE ? ORDER BY id DESC LIMIT 100; ";
 	
 	private CursoDAO() {
@@ -94,7 +97,30 @@ public class CursoDAO implements IDAO<Curso> {
 
 	@Override
 	public Curso getById(int id) throws Exception {
-		throw new Exception("sin implementar");
+		Curso registro = null;
+		try (Connection con = ConnectionManager.getConnection();
+				PreparedStatement pst = con.prepareStatement(SQL_GET_BY_ID);
+		) {
+
+			pst.setInt(1, id);
+			LOGGER.info(pst.toString());
+			
+			try( ResultSet rs = pst.executeQuery() ){			
+				
+				if( rs.next() ) {					
+					registro = mapper(rs);
+				}else {
+					throw new Exception("Registro no encontrado para id = " + id);
+				}
+			}
+			
+			
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+
+		return registro;
 	}
 
 
