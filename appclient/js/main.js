@@ -283,6 +283,7 @@ function seleccionar( id = 0 ){
     personaSeleccionada.cursos.forEach( el => {
 
         listaCursosAlumno.innerHTML += `<li>
+                                            <img src="${el.imagen}" class="imagen-50" alt="imagen curso">
                                             ${el.nombre}
                                             <i class="fas fa-trash" onclick="eliminarCurso(event, ${personaSeleccionada.id},${el.id})"></i>
                                         </li>`;
@@ -402,26 +403,10 @@ function eliminarCurso(event, idPersona, idCurso ){
 
     const url = endpoint + 'personas/' + idPersona + "/curso/" + idCurso;
     ajax('DELETE', url, undefined)
-    .then( data => {
-        alert('Curso Eliminado');
-
-        /* quitar curso del formulario mediante el evento del icono de la papelera
-        
-            <li>
-                JavaEE
-                <i class="fas fa-trash" onclick="eliminarCurso(event, 16,1)"></i>
-            </li>
-
-            event.target               => <i class="fas fa-trash" onclick="eliminarCurso(event, 16,1)"></i>
-            event.target.parentElement => <li> ..... </li>    
-
-        */
-      
+    .then( data => {       
        //  event.target.parentElement.style.display = 'none';
-       event.target.parentElement.classList.add('animated', 'bounceOut');
-        
-       cargarAlumnos();
-        
+       event.target.parentElement.classList.add('animated', 'bounceOut');        
+       cargarAlumnos();        
     })
     .catch( error => alert(error));
 
@@ -446,12 +431,13 @@ function asignarCurso( idPersona = 0, idCurso ){
         // cerrar modal
         document.getElementById("modal").style.display = 'none';    
 
-        alert(data.informacion);
+       // alert(data.informacion);
 
         const curso = data.data;
         // pintar curso al final de la lista        
         let lista = document.getElementById('cursosAlumno');        
         lista.innerHTML += `<li class="animated bounceIn">  
+                                <img src="${curso.imagen}" class="imagen-50" alt="imagen curso">
                                 ${curso.nombre}
                                 <i class="fas fa-trash" onclick="eliminarCurso(event, ${idPersona},${curso.id})"></i>    
                             </li>`;
