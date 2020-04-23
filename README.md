@@ -22,3 +22,6 @@ para configurar la base datos cambiar el fichero **config.xml**
 
 
 [Ejemplo de enlace pulsa para ir a el](https://github.com/ipartek)
+
+
+![imagen avatar1](https://github.com/ipartek/alumnos-profesores/blob/master/appclient/img/avatar1.png)
