@@ -19,3 +19,6 @@ para configurar la base datos cambiar el fichero **config.xml**
     db.name = "root";
     db.pass= "root";
 ~~~
+
+
+[Ejemplo de enlace pulsa para ir a el](https://github.com/ipartek)
