@@ -1,4 +1,4 @@
-package com.ipartek.formacion.model.dao;
+package com.ipartek.formacion.model.dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 
 import com.ipartek.formacion.model.Curso;
 import com.ipartek.formacion.model.Persona;
+import com.ipartek.formacion.model.dao.ConnectionManager;
+import com.ipartek.formacion.model.dao.IDAO;
 
 public class CursoDAO implements IDAO<Curso> {
 	

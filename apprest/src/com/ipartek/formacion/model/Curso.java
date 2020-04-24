@@ -1,11 +1,19 @@
 package com.ipartek.formacion.model;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 public class Curso {
 	
 	private int id;
 	private String nombre;
 	private String imagen;
 	private float precio;
+	
+	//TODO constructor gettes y setters y toString
+	@NotNull
+	@Valid // fuerza la validacion de Persona
+	private Persona profesor;
 	
 	public Curso() {
 		super();

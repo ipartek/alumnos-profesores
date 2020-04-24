@@ -24,8 +24,9 @@ import javax.ws.rs.core.Response.Status;
 
 import com.ipartek.formacion.model.Curso;
 import com.ipartek.formacion.model.Persona;
-import com.ipartek.formacion.model.dao.CursoDAO;
-import com.ipartek.formacion.model.dao.PersonaDAO;
+import com.ipartek.formacion.model.Rol;
+import com.ipartek.formacion.model.dao.impl.CursoDAO;
+import com.ipartek.formacion.model.dao.impl.PersonaDAO;
 
 @Path("/personas")
 @Produces("application/json")
@@ -46,6 +47,16 @@ public class PersonaController {
 	@GET
 	public ArrayList<Persona> getAll() {
 		LOGGER.info("getAll");		
+		
+		//TODO   endpoint/personas/?rol=1
+		//TODO   endpoint/personas/?rol=2
+		//TODO   endpoint/personas/?rol=alumnos
+		//TODO   endpoint/personas/?rol=profesores
+		
+		//TODO crear a mano el Rol para filtrar por Alumnos
+		Rol rAlumnos = new Rol();
+		
+		
 		ArrayList<Persona> registros = (ArrayList<Persona>) personaDAO.getAll();
 		return registros;
 	}

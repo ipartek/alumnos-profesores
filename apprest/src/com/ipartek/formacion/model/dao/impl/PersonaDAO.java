@@ -1,4 +1,4 @@
-package com.ipartek.formacion.model.dao;
+package com.ipartek.formacion.model.dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,8 +11,11 @@ import java.util.logging.Logger;
 
 import com.ipartek.formacion.model.Curso;
 import com.ipartek.formacion.model.Persona;
+import com.ipartek.formacion.model.Rol;
+import com.ipartek.formacion.model.dao.ConnectionManager;
+import com.ipartek.formacion.model.dao.IPersonaDAO;
 
-public class PersonaDAO implements IDAO<Persona> {
+public class PersonaDAO implements IPersonaDAO {
 	
 	private static final Logger LOGGER = Logger.getLogger(PersonaDAO.class.getCanonicalName());
 	
@@ -212,6 +215,7 @@ public class PersonaDAO implements IDAO<Persona> {
 		return pojo;
 	}
 	
+	@Override
 	public boolean asignarCurso( int idPersona, int idCurso ) throws Exception, SQLException {
 		boolean resul = false;
 		
@@ -235,6 +239,7 @@ public class PersonaDAO implements IDAO<Persona> {
 		return resul;
 	}
 	
+	@Override
 	public boolean eliminarCurso( int idPersona, int idCurso ) throws Exception, SQLException {
 		boolean resul = false;
 		
@@ -257,6 +262,14 @@ public class PersonaDAO implements IDAO<Persona> {
 		
 		return resul;
 	}
+	
+	
+	@Override
+	public List<Persona> getAllByRol(Rol rol) throws Exception {
+		// TODO Auto-generated method stub
+		throw new Exception("sin implemntar");
+	}
+	
 	
 	
 	
@@ -287,6 +300,11 @@ public class PersonaDAO implements IDAO<Persona> {
 			c.setPrecio( rs.getFloat("curso_precio"));
 			c.setImagen(rs.getString("curso_imagen"));			
 			p.getCursos().add(c);
+			
+			//TODO meter el profesor del curso
+			Persona profesor = new Persona();
+			
+			
 		}	
 		
 		//actualizar hashmap
@@ -294,6 +312,7 @@ public class PersonaDAO implements IDAO<Persona> {
 		
 		return p;
 	}
+
 	
 
 

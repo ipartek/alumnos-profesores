@@ -25,8 +25,8 @@ import javax.ws.rs.core.Response.Status;
 
 import com.ipartek.formacion.model.Curso;
 import com.ipartek.formacion.model.Persona;
-import com.ipartek.formacion.model.dao.CursoDAO;
-import com.ipartek.formacion.model.dao.PersonaDAO;
+import com.ipartek.formacion.model.dao.impl.CursoDAO;
+import com.ipartek.formacion.model.dao.impl.PersonaDAO;
 
 @Path("/cursos")
 @Produces("application/json")

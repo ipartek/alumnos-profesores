@@ -3,6 +3,7 @@ package com.ipartek.formacion.model;
 import java.util.ArrayList;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class Persona {
@@ -18,6 +19,10 @@ public class Persona {
 	//TODO regexp para "h" o "m"
 	// @Pattern(regexp = "" )
 	private String sexo;
+	
+	//TODO constructor gettes y setters y toString
+	@NotNull
+	private Rol rol;
 	
 	private ArrayList<Curso> cursos;
 	
