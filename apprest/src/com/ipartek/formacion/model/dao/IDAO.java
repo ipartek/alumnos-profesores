@@ -22,6 +22,14 @@ public interface IDAO<P> {
 	P getById(int id) throws Exception;
 	
 	/**
+	 * Buscar una persona por el nombre, el cual debe ser unico
+	 * @param nombre String
+	 * @return Persona
+	 * @throws Exception si no lo encuentra
+	 */
+	P getByNombre(String nombre) throws Exception;
+	
+	/**
 	 * Elimina pojo por su id
 	 * @param id
 	 * @return el pojo eliminado
